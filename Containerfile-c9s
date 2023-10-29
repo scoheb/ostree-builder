@@ -1,0 +1,5 @@
+FROM quay.io/centos/centos:stream9-minimal
+USER 0
+RUN microdnf install -y git ostree rpm-ostree skopeo selinux-policy-targeted podman skopeo
+RUN mkdir -p /usr/share/distribution-gpg-keys/centos
+WORKDIR /root
