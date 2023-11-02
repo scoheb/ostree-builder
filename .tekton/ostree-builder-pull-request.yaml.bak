@@ -4,31 +4,32 @@ metadata:
   annotations:
     build.appstudio.openshift.io/repo: https://github.com/brianwcook/ostree-builder?rev={{revision}}
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
+    build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
-      == "main"
+    pipelinesascode.tekton.dev/on-event: '[pull_request]'
+    pipelinesascode.tekton.dev/on-target-branch: '[main]'
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: ostree-builder
     appstudio.openshift.io/component: ostree-builder-fedora-38
     pipelines.appstudio.openshift.io/type: build
-  name: ostree-builder-fedora-38-on-push
+  name: ostree-builder-fedora-38-on-pull-request
   namespace: project-sagano-tenant
 spec:
   params:
-    - name: dockerfile
-      value: Containerfile-F38
-    - name: git-url
-      value: '{{repo_url}}'
-    - name: image-expires-after
-      value: 5d
-    - name: output-image
-      value: quay.io/redhat-user-workloads/project-sagano-tenant/ostree-builder/ostree-builder-fedora-38:{{revision}}
-    - name: path-context
-      value: .
-    - name: revision
-      value: '{{revision}}'
+  - name: dockerfile
+    value: Containerfile-F38
+  - name: git-url
+    value: '{{repo_url}}'
+  - name: image-expires-after
+    value: 5d
+  - name: output-image
+    value: quay.io/redhat-user-workloads/project-sagano-tenant/ostree-builder/ostree-builder-fedora-38:{{revision}}
+  - name: path-context
+    value: .
+  - name: revision
+    value: '{{revision}}'
   pipelineSpec:
     finally:
       - name: show-sbom
@@ -309,7 +310,7 @@ spec:
             - name: name
               value: buildah
             - name: bundle
-              value: quay.io/redhat-appstudio-tekton-catalog/task-buildah:0.1@sha256:e38365a7acbe4a6135fa72096513e24795dc7a8ed8f6be5fa0c7bf0f30484ac6
+              value: quay.io/redhat-appstudio-tekton-catalog/task-buildah:0.1@sha256:21cdb86ec6137c0bf234c37e12c5dab5190edc26413603dd062b73be7de2acfc
             - name: kind
               value: task
           resolver: bundles
@@ -347,7 +348,7 @@ spec:
             - name: name
               value: buildah-remote
             - name: bundle
-              value: quay.io/redhat-appstudio-tekton-catalog/task-buildah-remote:0.1@sha256:c800738e221c9efa307c68fc7711afc60ed2c712c4fbf3e9975c0385628bf129
+              value: quay.io/redhat-appstudio-tekton-catalog/task-buildah-remote:0.1@sha256:0dcd1c8593b98cc7eb083611050b49dfc9676fd0038859da3b6efbe9e64e0377
             - name: kind
               value: task
         when:
@@ -384,7 +385,7 @@ spec:
             - name: name
               value: buildah-remote
             - name: bundle
-              value: quay.io/redhat-appstudio-tekton-catalog/task-buildah-remote:0.1@sha256:c800738e221c9efa307c68fc7711afc60ed2c712c4fbf3e9975c0385628bf129
+              value: quay.io/redhat-appstudio-tekton-catalog/task-buildah-remote:0.1@sha256:0dcd1c8593b98cc7eb083611050b49dfc9676fd0038859da3b6efbe9e64e0377
             - name: kind
               value: task
         when:
@@ -422,7 +423,7 @@ spec:
             - name: name
               value: buildah-remote
             - name: bundle
-              value: quay.io/redhat-appstudio-tekton-catalog/task-buildah-remote:0.1@sha256:c800738e221c9efa307c68fc7711afc60ed2c712c4fbf3e9975c0385628bf129
+              value: quay.io/redhat-appstudio-tekton-catalog/task-buildah-remote:0.1@sha256:0dcd1c8593b98cc7eb083611050b49dfc9676fd0038859da3b6efbe9e64e0377
             - name: kind
               value: task
         when:
@@ -498,7 +499,7 @@ spec:
             - name: name
               value: deprecated-image-check
             - name: bundle
-              value: quay.io/redhat-appstudio-tekton-catalog/task-deprecated-image-check:0.3@sha256:35e2708505614397ede771474a2e2d6f04e911efc46afae47ca4a63e2f6fc9a0
+              value: quay.io/redhat-appstudio-tekton-catalog/task-deprecated-image-check:0.3@sha256:d507b3441d6c039691aa75c18d30f5191febcdca8f7f57f6122d75bb2f6f585d
             - name: kind
               value: task
           resolver: bundles
